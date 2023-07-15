@@ -8,7 +8,7 @@ export const listPost = (post) => {
       <div class="post-image-container">
       <img class="post-image" src="${post.imageUrl}">
       </div>
-      <div class="post-likes">
+      <div class="post-likes-box">
       <div class="post-likes">
       <button data-id=${post.id} data-liked="${post.isLiked}" class="like-button">
       ${post.isLiked 
