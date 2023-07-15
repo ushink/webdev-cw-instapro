@@ -1,7 +1,8 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage, putLikes, removeLikes } from "../index.js";
+import { posts, goToPage, putLikes, removeLikes, renderApp } from "../index.js";
 import { listPost } from "../listPosts.js";
+
 
 
 export function renderPostsPageComponent({ appEl }) {
@@ -49,7 +50,7 @@ export function renderPostsPageComponent({ appEl }) {
         } else {
           removeLikes(id);
         }
-
+        renderApp();
       })
     }
   };
