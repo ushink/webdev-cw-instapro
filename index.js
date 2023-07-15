@@ -1,4 +1,4 @@
-import { getPosts, postPosts, userPosts } from "./api.js";
+import { getPosts, postPosts, putLikePosts, removeLikePosts, userPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -31,6 +31,19 @@ export const logout = () => {
   goToPage(POSTS_PAGE);
 };
 
+function getFetch() {
+
+  return getPosts({ token: getToken() }).then((newPosts) => {
+    page = POSTS_PAGE;
+    posts = newPosts;
+    renderApp();
+  })
+  .catch((error) => {
+    console.error(error);
+    goToPage(POSTS_PAGE);
+  });
+};
+
 /**
  * Включает страницу приложения
  */
@@ -53,17 +66,7 @@ export const goToPage = (newPage, data) => {
     if (newPage === POSTS_PAGE) {
       page = LOADING_PAGE;
       renderApp();
-
-      return getPosts({ token: getToken() })
-        .then((newPosts) => {
-          page = POSTS_PAGE;
-          posts = newPosts;
-          renderApp();
-        })
-        .catch((error) => {
-          console.error(error);
-          goToPage(POSTS_PAGE);
-        });
+      return getFetch();
     }
 
     if (newPage === USER_POSTS_PAGE) {
@@ -93,7 +96,7 @@ export const goToPage = (newPage, data) => {
   throw new Error("страницы не существует");
 };
 
-const renderApp = () => {
+export const renderApp = () => {
   const appEl = document.getElementById("app");
   if (page === LOADING_PAGE) {
     return renderLoadingPageComponent({
@@ -144,3 +147,26 @@ const renderApp = () => {
 };
 
 goToPage(POSTS_PAGE);
+
+// Для лайков
+export function putLikes( id ) {
+    putLikePosts( id, { token: getToken() })
+    .then(() => {
+      getFetch()
+    })
+    .catch((error) => {
+      alert(error.message);
+      goToPage(AUTH_PAGE);
+    });
+};
+
+export function removeLikes( id ) {
+  removeLikePosts( id, { token: getToken() })
+  .then(() => {
+    getFetch()
+  })
+  .catch((error) => {
+    alert(error.message);
+    goToPage(AUTH_PAGE);
+  });
+};
