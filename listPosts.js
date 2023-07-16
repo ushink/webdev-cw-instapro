@@ -34,4 +34,4 @@ export const listPost = (post) => {
         </p>
       </div>
     </li>`;
-  };
+  }

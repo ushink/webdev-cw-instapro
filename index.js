@@ -8,17 +8,18 @@ import {
   POSTS_PAGE,
   USER_POSTS_PAGE,
 } from "./routes.js";
-import { renderPostsPageComponent } from "./components/posts-page-component.js";
+import { renderPostsPageComponent, renderUserPostComponent } from "./components/posts-page-component.js";
 import { renderLoadingPageComponent } from "./components/loading-page-component.js";
 import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
-
+export let userPostss = [];
 export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
+
 
 const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
@@ -43,7 +44,6 @@ function getFetch() {
     goToPage(POSTS_PAGE);
   });
 };
-
 /**
  * Включает страницу приложения
  */
@@ -66,19 +66,28 @@ export const goToPage = (newPage, data) => {
     if (newPage === POSTS_PAGE) {
       page = LOADING_PAGE;
       renderApp();
-      return getFetch();
+
+      return getPosts({ token: getToken() }).then((newPosts) => {
+        page = POSTS_PAGE;
+        posts = newPosts;
+        renderApp();
+      })
+      .catch((error) => {
+        console.error(error);
+        goToPage(POSTS_PAGE);
+      });
     }
 
     if (newPage === USER_POSTS_PAGE) {
       // TODO: реализовать получение постов юзера из API
       console.log("Открываю страницу пользователя: ", data.userId);
-      page = USER_POSTS_PAGE;
+      page = LOADING_PAGE;
       renderApp();
 
       return userPosts(data.userId, { token: getToken() })
         .then((newPosts) => {
           page = USER_POSTS_PAGE;
-          posts = newPosts;
+          userPostss = newPosts;
           renderApp();
         })
         .catch((error) => {
@@ -139,8 +148,8 @@ export const renderApp = () => {
 
   if (page === USER_POSTS_PAGE) {
     // TODO: реализовать страницу фотографию пользвателя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return renderPostsPageComponent({
+    //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
+    return renderUserPostComponent({
       appEl,
     });
   }
@@ -150,23 +159,23 @@ goToPage(POSTS_PAGE);
 
 // Для лайков
 export function putLikes( id ) {
-    putLikePosts( id, { token: getToken() })
-    .then(() => {
-      getFetch()
-    })
-    .catch((error) => {
-      alert(error.message);
-      goToPage(AUTH_PAGE);
-    });
-};
-
-export function removeLikes( id ) {
-  removeLikePosts( id, { token: getToken() })
+  putLikePosts( id, { token: getToken() })
   .then(() => {
-    getFetch()
+   // goToPage(page, data);
   })
   .catch((error) => {
     alert(error.message);
     goToPage(AUTH_PAGE);
   });
+};
+
+export function removeLikes( id ) {
+removeLikePosts( id, { token: getToken() })
+.then(() => {
+ // goToPage(page, data);
+})
+.catch((error) => {
+  alert(error.message);
+  goToPage(AUTH_PAGE);
+});
 };

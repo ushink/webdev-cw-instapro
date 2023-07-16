@@ -1,19 +1,37 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage, putLikes, removeLikes, renderApp } from "../index.js";
+import { posts, userPostss, goToPage, putLikes, removeLikes, renderApp } from "../index.js";
 import { listPost } from "../listPosts.js";
+import { putLikePosts, removeLikePosts } from "../api.js";
 
+
+function getLikePost() {
+
+  const likesButton = document.querySelectorAll('.like-button');
+  for (const like of likesButton) {
+    like.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const id = like.dataset.id;
+      const liked = like.dataset.liked;
+
+      if (liked == 'false') {
+        putLikes(id);
+      } else {
+        removeLikes(id);
+      }
+
+    })
+  }
+};
 
 
 export function renderPostsPageComponent({ appEl }) {
   // TODO: реализовать рендер постов из api
-  const postHtml = posts.map((post) => listPost(post)).join('');
 
   console.log("Актуальный список постов:", posts);
-  /**
-   * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
-   * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
-   */
+
+  const postHtml = posts.map((post) => listPost(post)).join('');
+
   const appHtml = `
               <div class="page-container">
                 <div class="header-container"></div>
@@ -36,24 +54,35 @@ export function renderPostsPageComponent({ appEl }) {
     });
   }
 
-  function getLikePost() {
-
-    const likesButton = document.querySelectorAll('.like-button');
-    for (const like of likesButton) {
-      like.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const id = like.dataset.id;
-        const liked = like.dataset.liked;
-
-        if (liked == 'false') {
-          putLikes(id);
-        } else {
-          removeLikes(id);
-        }
-        renderApp();
-      })
-    }
-  };
   getLikePost();
-  
 }
+
+export function renderUserPostComponent({appEl }) {
+  console.log("Актуальный список постов:", userPostss);
+
+  let userPostsHtml = userPostss.map((post) => listPost(post)).join('');
+
+  let userName = userPostss[0]?.user.name;
+  let userImage = userPostss[0]?.user.imageUrl;
+  const appHtml = `
+                <div class="page-container">
+                  <div class="header-container"></div>
+                  </div>
+                  <div class="posts-user-header">
+                      <img src="${userImage}" class="posts-user-header__user-image">
+                      <p class="posts-user-header__user-name">${userName}</p>
+                  </div>
+                  <ul class="posts posts-user">
+                    ${userPostsHtml}
+                  </ul>
+                `;
+
+  appEl.innerHTML = appHtml;
+
+  renderHeaderComponent({
+    element: document.querySelector(".header-container"),
+  });
+
+  getLikePost();
+}
+
