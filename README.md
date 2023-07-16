@@ -1,5 +1,5 @@
 # Instapro
-
+https://ushink.github.io/webdev-cw-instapro/
 MVP аналога популярной соц. сети для обмена фотографиями
 
 ## Ссылка на приложение:
