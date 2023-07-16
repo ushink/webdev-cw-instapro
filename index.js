@@ -125,7 +125,7 @@ export const renderApp = () => {
       onAddPostClick({ description, imageUrl }) {
         // TODO: реализовать добавление поста в API
         console.log("Добавляю пост...", { description, imageUrl });
-        postPosts({ description, imageUrl, token: getToken() });
+        postPosts ({ token: getToken(), description, imageUrl });    
         goToPage(POSTS_PAGE);
       },
     });
