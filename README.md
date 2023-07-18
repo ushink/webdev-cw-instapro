@@ -12,4 +12,4 @@ https://ushink.github.io/webdev-cw-instapro/
 
 ## Фактически затраченное время
 
-10 часов
+20 часов
