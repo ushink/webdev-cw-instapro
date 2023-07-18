@@ -10,12 +10,13 @@ import { putLikePosts, removeLikePosts } from "../api.js";
   
     for (const likeButton of likeButtons) {
       likeButton.addEventListener("click", () => {
-        let id = likeButton.dataset.postId;
+        let id = likeButton.dataset.id;
+        let like = likeButton.dataset.liked;
   
-        if (likeButton.dataset.liked == "false") {
+        if (like == "false") {
           putLikePosts({
             id,
-            token,
+            token
           })
             .then(() => {
               goToPage(page, data);
@@ -26,7 +27,7 @@ import { putLikePosts, removeLikePosts } from "../api.js";
         } else {
           removeLikePosts({
             id,
-            token,
+            token
           })
             .then(() => {
               goToPage(page, data);
@@ -71,7 +72,7 @@ export function renderPostsPageComponent({ appEl, token }) {
   getLikePost(token, page, {});
 }
 
-export function renderUserPostComponent({appEl, token}) {
+export function renderUserPostComponent({ appEl, token }) {
   console.log("Актуальный список постов user:", postsUser);
 
   let userPostsHtml = postsUser.map((post) => listPost(post)).join('');

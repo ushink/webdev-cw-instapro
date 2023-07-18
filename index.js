@@ -132,8 +132,7 @@ export const renderApp = () => {
   if (page === POSTS_PAGE) {
     return renderPostsPageComponent({
       appEl, 
-      token: getToken(),
-
+      token: getToken()
     });
   }
 
@@ -142,8 +141,7 @@ export const renderApp = () => {
     //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return renderUserPostComponent({
       appEl, 
-      token: getToken(),
-
+      token: getToken()
     });
   }
 };

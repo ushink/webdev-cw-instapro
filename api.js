@@ -111,7 +111,7 @@ export function uploadImage({ file }) {
 
 // Реализация лайков
 
-export const putLikePosts = ({id, token}) => {
+export const putLikePosts = ({ id, token }) => {
   return fetch(`${postsHost}/${id}/like`, {
     method: "POST",
     headers: {
@@ -128,13 +128,11 @@ export const putLikePosts = ({id, token}) => {
     } else if (response.status == 401){
       throw new Error("Чтобы поставить лайк, необходимо авторизоваться");
       
-    } else{
-      return response.json();
-    }
+    } 
   })
 }
 
-export const removeLikePosts = ({id, token}) => {
+export const removeLikePosts = ({ id, token }) => {
   return fetch(`${postsHost}/${id}/dislike`, {
     method: "POST",
     headers: {
@@ -151,9 +149,7 @@ export const removeLikePosts = ({id, token}) => {
     } else if (response.status == 401){
       throw new Error("Чтобы поставить лайк, необходимо авторизоваться");
       
-    } else{
-      return response.json();
-    }
+    } 
     
   })
 }
