@@ -110,7 +110,8 @@ export function uploadImage({ file }) {
 }
 
 // Реализация лайков
-export const putLikePosts = (id, {token}) => {
+
+export const putLikePosts = ({id, token}) => {
   return fetch(`${postsHost}/${id}/like`, {
     method: "POST",
     headers: {
@@ -120,12 +121,20 @@ export const putLikePosts = (id, {token}) => {
   .then((response) => {
     if (response.status === 200) {
       return response.json();
+
+    } else if (response.status === 500) {
+      throw new Error("Some error");
+
+    } else if (response.status == 401){
+      throw new Error("Чтобы поставить лайк, необходимо авторизоваться");
+      
+    } else{
+      return response.json();
     }
-    throw new Error("Лайкать посты могут только авторизованные пользователи");
   })
 }
 
-export const removeLikePosts = (id, {token}) => {
+export const removeLikePosts = ({id, token}) => {
   return fetch(`${postsHost}/${id}/dislike`, {
     method: "POST",
     headers: {
@@ -135,7 +144,17 @@ export const removeLikePosts = (id, {token}) => {
   .then((response) => {
     if (response.status === 200) {
       return response.json();
+
+    } else if (response.status === 500) {
+      throw new Error("Some error");
+
+    } else if (response.status == 401){
+      throw new Error("Чтобы поставить лайк, необходимо авторизоваться");
+      
+    } else{
+      return response.json();
     }
-    throw new Error("Убирать лайк могут только авторизованные пользователи");
+    
   })
 }
+

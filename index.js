@@ -1,4 +1,4 @@
-import { getPosts, postPosts, putLikePosts, removeLikePosts, userPosts } from "./api.js";
+import { getPosts, postPosts, userPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -15,11 +15,11 @@ import {
   removeUserFromLocalStorage,
   saveUserToLocalStorage,
 } from "./helpers.js";
-export let userPostss = [];
+
 export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
-
+export let postsUser = [];
 
 const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
@@ -32,18 +32,7 @@ export const logout = () => {
   goToPage(POSTS_PAGE);
 };
 
-function getFetch() {
 
-  return getPosts({ token: getToken() }).then((newPosts) => {
-    page = POSTS_PAGE;
-    posts = newPosts;
-    renderApp();
-  })
-  .catch((error) => {
-    console.error(error);
-    goToPage(POSTS_PAGE);
-  });
-};
 /**
  * Включает страницу приложения
  */
@@ -87,7 +76,7 @@ export const goToPage = (newPage, data) => {
       return userPosts(data.userId, { token: getToken() })
         .then((newPosts) => {
           page = USER_POSTS_PAGE;
-          userPostss = newPosts;
+          postsUser = newPosts;
           renderApp();
         })
         .catch((error) => {
@@ -142,7 +131,9 @@ export const renderApp = () => {
 
   if (page === POSTS_PAGE) {
     return renderPostsPageComponent({
-      appEl,
+      appEl, 
+      token: getToken(),
+
     });
   }
 
@@ -150,32 +141,11 @@ export const renderApp = () => {
     // TODO: реализовать страницу фотографию пользвателя
     //appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return renderUserPostComponent({
-      appEl,
+      appEl, 
+      token: getToken(),
+
     });
   }
 };
 
 goToPage(POSTS_PAGE);
-
-// Для лайков
-export function putLikes( id ) {
-  putLikePosts( id, { token: getToken() })
-  .then(() => {
-   // goToPage(page, data);
-  })
-  .catch((error) => {
-    alert(error.message);
-    goToPage(AUTH_PAGE);
-  });
-};
-
-export function removeLikes( id ) {
-removeLikePosts( id, { token: getToken() })
-.then(() => {
- // goToPage(page, data);
-})
-.catch((error) => {
-  alert(error.message);
-  goToPage(AUTH_PAGE);
-});
-};

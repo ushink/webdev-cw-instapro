@@ -121,6 +121,7 @@
   flex-direction: row;
   align-items: center;
   margin-bottom: 12px;
+  justify-content: center;
 }
 
 .posts-user-header__user-image {

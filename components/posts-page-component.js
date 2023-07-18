@@ -1,31 +1,45 @@
-import { USER_POSTS_PAGE } from "../routes.js";
+import { USER_POSTS_PAGE, POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, userPostss, goToPage, putLikes, removeLikes, renderApp } from "../index.js";
+import { posts, postsUser, goToPage } from "../index.js";
 import { listPost } from "../listPosts.js";
 import { putLikePosts, removeLikePosts } from "../api.js";
 
 
-function getLikePost() {
-
-  const likesButton = document.querySelectorAll('.like-button');
-  for (const like of likesButton) {
-    like.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const id = like.dataset.id;
-      const liked = like.dataset.liked;
-
-      if (liked == 'false') {
-        putLikes(id);
-      } else {
-        removeLikes(id);
-      }
-
-    })
+  function getLikePost(token, page, data) {
+    const likeButtons = document.querySelectorAll(".like-button");
+  
+    for (const likeButton of likeButtons) {
+      likeButton.addEventListener("click", () => {
+        let id = likeButton.dataset.postId;
+  
+        if (likeButton.dataset.liked == "false") {
+          putLikePosts({
+            id,
+            token,
+          })
+            .then(() => {
+              goToPage(page, data);
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        } else {
+          removeLikePosts({
+            id,
+            token,
+          })
+            .then(() => {
+              goToPage(page, data);
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        }
+      });
+    }
   }
-};
 
-
-export function renderPostsPageComponent({ appEl }) {
+export function renderPostsPageComponent({ appEl, token }) {
   // TODO: реализовать рендер постов из api
 
   console.log("Актуальный список постов:", posts);
@@ -53,17 +67,17 @@ export function renderPostsPageComponent({ appEl }) {
       });
     });
   }
-
-  getLikePost();
+  const page = POSTS_PAGE;
+  getLikePost(token, page, {});
 }
 
-export function renderUserPostComponent({appEl }) {
-  console.log("Актуальный список постов:", userPostss);
+export function renderUserPostComponent({appEl, token}) {
+  console.log("Актуальный список постов user:", postsUser);
 
-  let userPostsHtml = userPostss.map((post) => listPost(post)).join('');
+  let userPostsHtml = postsUser.map((post) => listPost(post)).join('');
 
-  let userName = userPostss[0]?.user.name;
-  let userImage = userPostss[0]?.user.imageUrl;
+  let userName = postsUser[0]?.user.name;
+  let userImage = postsUser[0]?.user.imageUrl;
   const appHtml = `
                 <div class="page-container">
                   <div class="header-container"></div>
@@ -83,6 +97,13 @@ export function renderUserPostComponent({appEl }) {
     element: document.querySelector(".header-container"),
   });
 
-  getLikePost();
+  const page = USER_POSTS_PAGE;
+
+  let data = {
+    userId: postsUser[0]?.user.id
+  };
+  
+  getLikePost(token, page, data);
+
 }
 
